@@ -1,94 +1,82 @@
-/*
- * Created by Martin Dünkelmann on 14.05.18 20:29
- * Copyright (c) 2018. All rights reserved.
- *
- * Last modified 14.05.18 18:41
- */
-
-const nodeExternals = require('webpack-node-externals');
-
-const routes = [
-  {
-    name: 'index',
-    path: 'index',
-    component: 'pages/index.vue'
-  },
-  {
-    name: 'inspire',
-    path: 'inspire',
-    component: 'pages/inspire.vue'
-  },
-];
+const pkg = require('./package')
 
 module.exports = {
-  router: {
-    mode: 'history',
-// only add `router.base = '/<repository-name>/'` if `DEPLOY_ENV` is `GH_PAGES`
-    base: process.env.DEPLOY_ENV === 'GH_PAGES' ? '/nuxt-starter/' : '/',
-    routes: routes,
-  },
+	mode: 'universal',
+
   /*
   ** Headers of the page
   */
   head: {
-    title: 'nuxt-starter',
-    meta: [
-      {charset: 'utf-8'},
-      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
-      {hid: 'description', name: 'description', content: 'Nuxt.js + Vuetify.js project'}
-    ],
-    link: [
-      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
-      {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'}
-    ]
+  	title: pkg.name,
+  	meta: [
+  	{ charset: 'utf-8' },
+  	{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
+  	{ hid: 'description', name: 'description', content: pkg.description }
+  	],
+  	link: [
+  	{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+  	{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
+  	],
+  	script: [
+  	],
   },
-  plugins: ['~/plugins/vuetify.js'],
-  css: [
-    '~/assets/style/app.styl'
-  ],
+
   /*
-  ** Customize the progress bar color
+  ** Customize the progress-bar color
   */
-  loading: {color: '#3B8070'},
+  loading: { color: '#FFFFFF' },
+  cache: false,
+
+  /*
+  ** Global CSS
+  */
+  css: [
+  '~/assets/css/style.css',
+  ],
+
+  /*
+  ** Plugins to load before mounting the App
+  */
+  plugins: [
+  '~plugins/core-components.js',
+  '~plugins/date-filter.js',
+  '~plugins/vuesax.js',
+  ],
+
+  /*
+  ** Nuxt.js modules
+  */
+  modules: [
+    // Doc: https://github.com/nuxt-community/axios-module#usage
+    '@nuxtjs/axios'
+    ],
+  /*
+  ** Axios module configuration
+  */
+  axios: {
+    // See https://github.com/nuxt-community/axios-module#options
+    baseURL: "https://dev.rusradio.ru",
+    // https: true,
+    // proxy: true,
+    // proxyHeaders: false,
+    headers: {
+    	'Access-Control-Allow-Origin': '*',
+    	'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+    }
+},
+middleware: {
+
+},
+
   /*
   ** Build configuration
   */
   build: {
-// only add `router.base = '/<repository-name>/'` if `DEPLOY_ENV` is `GH_PAGES`
-    publicPath: process.env.DEPLOY_ENV === 'GH_PAGES' ? 'https://martinx3.github.io/nuxt-starter/' : '/_nuxt/',
-    babel: {
-      plugins: [
-        ["transform-imports", {
-          "vuetify": {
-            "transform": "vuetify/es5/components/${member}",
-            "preventFullImport": true
-          }
-        }]
-      ]
-    },
-    vendor: [
-      '~/plugins/vuetify.js'
-    ],
-    extractCSS: true,
     /*
-    ** Run ESLint on save
+    ** You can extend webpack config here
     */
     extend(config, ctx) {
-      if (ctx.isDev && ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
-      }
-      if (ctx.isServer) {
-        config.externals = [
-          nodeExternals({
-            whitelist: [/^vuetify/]
-          })
-        ]
-      }
+
     }
-  }
-};
+}
+}
